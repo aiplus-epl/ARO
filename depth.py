@@ -32,7 +32,7 @@ def getDepth(vertices, intrinsic, extrinsic):
     width = 1280
     height = 1024
 
-    # 이미지 코너 좌표 계산 (이미지 평면상의 좌표)
+    # 이미지 평면상의 좌표
     image_corners = np.array([
         [0, 0, 1],  # top-left
         [width, 0, 1],  # top-right
@@ -49,7 +49,7 @@ def getDepth(vertices, intrinsic, extrinsic):
     world_corners = (extrinsic @ np.hstack((camera_corners, np.ones((4, 1)))).T).T
     world_corners = world_corners[:, :3]
 
-    # 카메라 위치 (extrinsic matrix의 마지막 열이 카메라 위치임)
+    # 카메라 위치
     camera_position = extrinsic[:3, 3]
 
     # 사다리꼴을 정의하는 4개의 평면 계산

@@ -25,8 +25,8 @@ class CustomRobotEnv(gym.Env):
 
         # 행동 공간 정의 (x, y, z 축 회전 및 이동)
         self.action_space = spaces.Box(
-            low=np.array([-90, -90, -90, -0.05, -0.05, -0.05]),
-            high=np.array([90, 90, 90, 0.05, 0.05, 0.05]),
+            low=np.array([-180, -180, -180, -0.05, -0.05, 0]),
+            high=np.array([180, 180, 180, 0.05, 0.05, 0]),
             dtype=np.float32
         )
 
@@ -81,6 +81,7 @@ class CustomRobotEnv(gym.Env):
         # action에 따른 로봇의 회전 및 이동 적용
         rx, ry, rz, px, py, pz = action
         new_position = homoCaculate(self.current_position, rx, ry, rz, px, py, pz)
+        new_position[2, 3] = self.init_extrinsic[2, 3]
 
         # 새로운 위치의 (x, y) 좌표 추출
         current_xy = self.current_position[:2, 3]
@@ -95,7 +96,7 @@ class CustomRobotEnv(gym.Env):
             reward = -1 # 충돌 시 마이너스 보상
 
             # 충돌 횟수가 10번 이상이면 에피소드 종료
-            if self.collision_count >= 5:
+            if self.collision_count >= 10:
                 self.done = True
         else:
             # 새로운 위치가 이전에 방문한 노드와 가까운지 확인
@@ -135,6 +136,7 @@ class CustomRobotEnv(gym.Env):
 
         if self.done:
             self.episode +=1
+            print("---done---")
 
         return state, reward, self.done, {}
 
