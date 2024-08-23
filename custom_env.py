@@ -131,7 +131,7 @@ class CustomRobotEnv(gym.Env):
 
 
         with open("reward.txt", "a") as file:
-            file.write(f"{self.episode}\t{self.current_position[:3, 3]}\t{reward}\t{self.total_reward}\t{self.done}\n")
+            file.write(f"{self.episode}\t{float(self.current_position[0, 3])}\t{float(self.current_position[1, 3])}\t{float(self.current_position[2, 3])}\t{reward}\t{self.total_reward}\t{self.done}\n")
 
         if self.done:
             self.episode +=1
