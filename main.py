@@ -90,27 +90,34 @@ scanList = ["17DRP5sb8fy",  # 0
             "zsNo4HB9uLZ",  # 89
             ]
 
+
 import open3d as o3d
 import numpy as np
 import pandas as pd
+import DDPG
 
+# scanId 설정
 scanId = scanList[0]
 
+# 경로 설정
 ply_path = f"D:/aro/scan/{scanId}/house_segmentations/{scanId}.ply"
+image_path = f"D:/aro/scan/{scanId}/house_segmentations/info/image.csv"
 
+# 메쉬 로드
 mesh = o3d.io.read_triangle_mesh(ply_path)
-
-# 메쉬를 위에서 본 2D 뷰 생성
 vertices = np.asarray(mesh.vertices)
 
+# z값을 기준으로 4분위수 계산 및 필터링
 z_values = vertices[:, 2]
-
-# 4분위수 계산
 quartiles = np.percentile(z_values, [25, 50, 75])
-
-# Q1 ~ Q3 사이의 정점 필터링
 filtered_indices = np.where((z_values > quartiles[0]) & (z_values < quartiles[2]))[0]
 filtered_vertices = vertices[filtered_indices]
 
+# 이미지 데이터 로드
+imageDf = pd.read_csv(image_path)
+init_extrinsic = list(imageDf[['e00', 'e01', 'e02', 'e03', 'e10', 'e11', 'e12', 'e13',
+                               'e20', 'e21', 'e22', 'e23', 'e30', 'e31', 'e32', 'e33']].iloc[0])
+init_intrinsic = list(imageDf[['i00', 'i01', 'i02', 'i10', 'i11', 'i12', 'i20', 'i21', 'i22']].iloc[0])
 
-
+# DDPG 학습 및 실행
+DDPG.run_ddpg(filtered_vertices, init_extrinsic, init_intrinsic)

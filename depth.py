@@ -81,4 +81,5 @@ def getDepth(vertices, intrinsic, extrinsic):
 
     # 사다리꼴 내부에 있는 정점들을 카메라와의 거리로 정렬
     inside_vertices_sorted = sorted(inside_vertices, key=lambda v: np.linalg.norm(v - camera_position))
-    return inside_vertices_sorted
+    delta_vertices = [v - camera_position for v in inside_vertices]
+    return delta_vertices

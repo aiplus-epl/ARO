@@ -23,7 +23,6 @@ def isBlocked(filtered_vertices, x1, y1, x2, y2):
 
     # 맞닿는 부분이 있다면 yes, 없다면 no
     if len(close_indices) > 0:
-        print("yes")
         # 맞닿는 좌표를 표시
         intersecting_points = line_points[close_indices]
         # x1, y1과 가장 가까운 맞닿는 점 찾기
